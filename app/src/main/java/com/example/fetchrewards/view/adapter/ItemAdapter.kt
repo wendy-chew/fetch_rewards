@@ -1,18 +1,23 @@
-package com.example.fetchrewards
+package com.example.fetchrewards.view.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fetchrewards.R
+import com.example.fetchrewards.controller.ItemController
+import com.example.fetchrewards.model.Item
 
-class ItemAdapter(private val items: List<Item>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ItemAdapter(private val itemController: ItemController) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val sortedItems: List<Item>
+    private var items: List<Item> = emptyList()
 
     init {
-        // Sort by listId first, and then by the numeric part of the name
-        sortedItems = items.sortedWith(compareBy({ it.listId }, { extractNumber(it.name) }))
+        itemController.fetchItems { fetchedItems ->
+            items = fetchedItems
+            notifyDataSetChanged()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -21,12 +26,13 @@ class ItemAdapter(private val items: List<Item>) : RecyclerView.Adapter<Recycler
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = sortedItems[position]
+        val item = items[position]
         val viewHolder = holder as ViewHolder
+
         // if the current item is the first item in the list
         // or if the previous item has a different list ID.
         // display the list ID as a header
-        if (position == 0 || sortedItems[position - 1].listId != item.listId) {
+        if (position == 0 || items[position - 1].listId != item.listId) {
             viewHolder.listId.text = "List ${item.listId}"
             viewHolder.listId.visibility = View.VISIBLE
         } else {
@@ -38,16 +44,11 @@ class ItemAdapter(private val items: List<Item>) : RecyclerView.Adapter<Recycler
     }
 
     override fun getItemCount(): Int {
-        return sortedItems.size
+        return items.size
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val listId: TextView = itemView.findViewById(R.id.list_id)
         val itemName: TextView = itemView.findViewById(R.id.item_name)
-    }
-
-    private fun extractNumber(name: String?): Int {
-        // Extracts the number from the "Item" string
-        return name?.substringAfter("Item")?.trim()?.toIntOrNull() ?: 0
     }
 }
