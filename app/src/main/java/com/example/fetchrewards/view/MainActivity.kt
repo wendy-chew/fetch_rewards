@@ -1,4 +1,4 @@
-package com.example.fetchrewards
+package com.example.fetchrewards.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fetchrewards.R
 import com.example.fetchrewards.api.Api
 import com.example.fetchrewards.api.ApiService
 import com.example.fetchrewards.controller.ItemController
